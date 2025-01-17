@@ -83,6 +83,12 @@ const createServer = async (container) => {
     handler: () => ({
       value: "Hello world!",
     }),
+    options: {
+      cors: {
+        origin: ["*"],
+        headers: ["Content-Type", "Authorization"],
+      },
+    },
   });
 
   server.ext("onPreResponse", (request, h) => {
