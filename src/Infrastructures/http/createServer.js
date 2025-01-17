@@ -15,7 +15,7 @@ const createServer = async (container) => {
     port: process.env.PORT,
     routes: {
       cors: {
-        origin: ["https://forum-k6lr5srur-windys-projects-c152887b.vercel.app/", "*"],
+        origin: ["*"],
       },
     },
   });
@@ -84,7 +84,7 @@ const createServer = async (container) => {
     }),
     options: {
       cors: {
-        origin: ["https://forum-k6lr5srur-windys-projects-c152887b.vercel.app/", "*"],
+        origin: ["*"],
       },
     },
   });
