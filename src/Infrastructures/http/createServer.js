@@ -1,5 +1,6 @@
 require("dotenv").config();
 const Hapi = require("@hapi/hapi");
+const HapiRateLimit = require("hapi-rate-limit");
 const ClientError = require("../../Commons/exceptions/ClientError");
 const Jwt = require("@hapi/jwt");
 const DomainErrorTranslator = require("../../Commons/exceptions/DomainErrorTranslator");
@@ -36,6 +37,22 @@ const createServer = async (container) => {
   });
 
   await server.register([
+    {
+      plugin: HapiRateLimit,
+      options: {
+        enabled: true,
+        userLimit: 90,
+        pathLimit: 90,
+        userCache: {
+          segment: "hapi-rate-limit-user",
+          expiresIn: 60000,
+        },
+        pathCache: {
+          segment: "hapi-rate-limit-path",
+          expiresIn: 60000,
+        },
+      },
+    },
     {
       plugin: comments,
       options: { container },
