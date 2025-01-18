@@ -7,7 +7,7 @@ module.exports = function middleware(req) {
   const url = req.nextUrl;
 
   // Only apply rate limiting for `/threads` route
-  if (url.pathname !== "/threads") {
+  if (!url.pathname.startsWith("/threads")) {
     return NextResponse.next();
   }
 
