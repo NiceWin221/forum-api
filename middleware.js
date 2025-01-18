@@ -3,6 +3,8 @@ const rateLimitCache = new Map();
 module.exports = async function middleware(req) {
   const url = req.url;
 
+  console.log("Request URL:", url);
+
   // Only apply rate limiting for any path starting with `/threads`
   if (!url.startsWith("/threads")) {
     return new Response("Request allowed", { status: 200 });
