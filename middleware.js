@@ -1,22 +1,18 @@
-const { NextResponse } = require("next/server");
-
-// Cache to track request timestamps for rate limiting
 const rateLimitCache = new Map();
 
-module.exports = function middleware(req) {
-  const url = req.nextUrl;
+module.exports = async function middleware(req) {
+  const url = req.url;
 
-  // Only apply rate limiting for `/threads` route
-  if (!url.pathname.startsWith("/threads")) {
-    return NextResponse.next();
+  // Only apply rate limiting for any path starting with `/threads`
+  if (!url.startsWith("/threads")) {
+    return new Response("Request allowed", { status: 200 });
   }
 
   // Get the user's IP address
-  const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || "unknown";
-  console.log("ip: ", ip);
+  const ip = req.headers.get("x-forwarded-for") || req.connection.remoteAddress || "unknown";
   const now = Date.now();
-  const limit = 5; // 90 requests per minute
-  const window = 60000; // 1 minute window in milliseconds
+  const limit = 5; // 5 requests per minute
+  const window = 60 * 1000; // 1 minute window in milliseconds
 
   // Initialize rate limit cache for the IP if it doesn't exist
   if (!rateLimitCache.has(ip)) {
@@ -28,7 +24,9 @@ module.exports = function middleware(req) {
 
   // If the request exceeds the limit, return 429 (Too Many Requests)
   if (timestamps.length >= limit) {
-    return new NextResponse("Too Many Requests", { status: 429 });
+    return new Response("Too many requests, please try again later.", {
+      status: 429,
+    });
   }
 
   // Otherwise, add the current timestamp to the list for this IP
@@ -36,5 +34,5 @@ module.exports = function middleware(req) {
   rateLimitCache.set(ip, timestamps);
 
   // Allow the request to continue
-  return NextResponse.next();
+  return new Response("Request allowed", { status: 200 });
 };
