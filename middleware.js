@@ -12,7 +12,8 @@ module.exports = function middleware(req) {
   }
 
   // Get the user's IP address
-  const ip = req.ip || req.headers.get("x-forwarded-for") || "unknown";
+  const ip = req.headers.get("x-real-ip") || req.headers.get("x-forwarded-for") || "unknown";
+  console.log("ip: ", ip);
   const now = Date.now();
   const limit = 5; // 90 requests per minute
   const window = 60000; // 1 minute window in milliseconds
